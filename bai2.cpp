@@ -158,31 +158,31 @@ void XoaDongij(nut *&dau, int i, int j)
 void ChepDongij(nut *dau, int i, int j, nut *&dau1)
 {
 	int dem;
-	nut *p, *q, *t, *l;
+	nut *p, *q, *t, *n;
 	if(j >= i)
 	{
-			//tim i
+		// tim i
 		dem = 1;
 		p = dau;
-		while(p != NULL && dem != i)
+		while(p != NULL && dem!=i)
 		{
-			p = p -> sau;
+			p = p-> sau;
 			dem = dem + 1;
 		}
 		if(p != NULL)
 		{
-			//tim j
+			// tim j
 			q = p;
 			while(q != NULL && dem != j)
 			{
 				q = q -> sau;
 				dem = dem + 1;
 			}
-			// in ra dong i den dong j
+			// in ra dong i den dong j.
 			if(q != NULL)
 			while(p != q -> sau)
 			{
-				cout << p -> nd << endl;
+
 				t = new nut;
 				strcpy(t -> nd, p -> nd);
 				t -> sau = NULL;
@@ -191,19 +191,44 @@ void ChepDongij(nut *dau, int i, int j, nut *&dau1)
 					dau1 = t;
 				else
 				{
-					l -> sau = t;
-					t -> truoc = l;
+					n -> sau = t;
+					t -> truoc = n;
 				}
-				l = t;
+				n = t;
 				p = p -> sau;
 			}
 		}
 	}
 }
 
+void ChenDongij(nut *&dau, int i, int j, int k)
+{
+	int m;
+	nut *v, *u, *w;
+	v = dau;
+	m = 1;
+	ChepDongij(dau, i, j, dau1);
+	while(v != NULL && m != k)
+	{
+		v = v -> sau;
+		m = m + 1;
+	}
+	if(v != NULL)
+	{ 
+		// v tro den dong k
+		u = dau1;
+		while(u -> sau != NULL)
+		u = u -> sau;
+		// u la dong cuoi cua ds dau1
+		w = v -> sau; // dong sau dong k
+		v -> sau = dau1;
+		dau1 -> truoc = v;
+		u -> sau = w;
+		w -> truoc = u;
+	}
+}
 int main()
 {
-	int k;
 	KhoiTao(dau);
 	NhapVB(dau);
 	DuyetVB(dau);
@@ -218,6 +243,7 @@ int main()
 	XoaDongij(dau, 1, 3);
 	DuyetVB(dau);
 	cout << "-----------------------------------------" << endl;
-	ChepDongij(dau, 1, 2, dau1);
+	cout << "Van ban sau khi chen dong 1 va dong 2 vao sau dong 3 : " << endl;
+	ChenDongij(dau, 1, 2, 3);
 	DuyetVB(dau);
 }
