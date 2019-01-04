@@ -4,6 +4,7 @@ using namespace std;
 struct nut
 {
 	int info;
+	int cb;
 	nut *trai, *phai;
 };
 
@@ -77,6 +78,88 @@ void DuyetNRL(Node *goc)
 	}
 }
 
+void XoayTrai(Node *&p)
+{
+	Node *q;
+	q = p -> phai;
+	p -> phai = q -> trai;
+	q -> trai = p;
+	p = q;
+}
+
+void XoayPhai(Node *&p)
+{
+	Node *q;
+	q = p -> trai;
+	p -> trai = q -> phai;
+	q -> phai = p;
+	p = q;
+}
+
+void CanBangTrai(Node *&p)
+{
+	switch(p -> trai -> cb)
+	{
+		case 1: //Mat can bang trai
+			XoayPhai(goc);
+			p -> cb = 0;
+			p -> phai -> cb = 0;
+			break;
+		case 2: //Cho biet truong hop mat can bang nao
+			XoayTrai(p -> trai);
+			XoayPhai(goc);
+			switch(p -> cb)
+			{
+				case 0: 
+					p -> trai -> cb = 0;
+					p -> phai -> cb = 0;
+					break;
+				case 1:
+					p -> trai -> cb = 0;
+					p -> phai -> cb = 2;
+					break;
+				case 2:	
+					p -> trai -> cb = 1;
+					p -> phai -> cb = 2;
+					break;
+			}
+			p -> cb = 0;
+			break;
+	}
+}
+
+void CanBangPhai(Node *&p)
+{
+	switch(p -> phai -> cb)
+	{
+		case 1: //Cho biet la truong hop mat can bang nao
+			XoayPhai(p -> phai);
+			XoayTrai(goc);
+			switch(p -> cb)
+			{
+				case 0: 
+					p -> trai -> cb = 0;
+					p -> phai -> cb = 0;
+					break;
+				case 1:
+					p -> trai -> cb = 1;
+					p -> phai -> cb = 0;
+					break;
+				case 2:
+					p -> trai -> cb = 0;
+					p -> phai -> cb = 2;
+					break;
+			}
+			p -> cb = 0;
+			break;
+		case 2: // Cho biet day la truong hop mat can bang nao
+			XoayTrai(goc);
+			p -> cb = 0;
+			p -> trai -> cb = 0;
+			break;
+	}
+}
+
 int XoaNut(Node *goc, int x)
 {
 	if(goc == NULL)
@@ -112,12 +195,21 @@ int XoaNut(Node *goc, int x)
 	return 1;
 }
 
-void TimMax(Node c, int &max)
+int KiemTraCayAVL(Node *goc)
 {
-	if(c == NULL)
-		return 0;
-	if(c -> trai != NULL)
-	
+	if(goc == NULL)
+		return 1;
+	if((goc -> trai == NULL) && (goc -> phai == NULL))
+		return 1;
+	else
+		if(goc -> trai == NULL)
+			KiemTraCayAVL(goc -> phai);
+		else
+			if(goc -> phai == NULL)
+				KiemTraCayAVL(goc -> trai);
+			else
+				if((goc -> trai -> info > goc -> info) || (goc -> phai -> info < goc -> info))
+					return 0;
 }
 
 int main()
@@ -134,8 +226,14 @@ int main()
 	cout << "Duyet cay theo thu tu truoc (NRL) " << endl;
 	DuyetNRL(goc);
 	cout << "------------------------------------------" << endl;
+	
 	if(XoaNut(goc, 2))
-		cout << "Xoa thanh cong ! ";
+		cout << "Xoa thanh cong ! " << endl;
 	else
-		cout << "Khong tim thay nut can xoa !";
+		cout << "Khong tim thay nut can xoa !" << endl;
+	cout << "-------------------------------------------" << endl;
+	if(KiemTraCayAVL(goc) == 1)
+		cout << "La cay AVL" << endl;
+	else
+		cout << "Khong phai cay AVL" << endl;
 }
