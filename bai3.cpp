@@ -79,6 +79,18 @@ void DuyetNRL(Node *goc)
 	}
 }
 
+void InMuci(Node *goc, int i, int muc = 1)
+{
+	if(goc != NULL)
+		if(muc == i)
+			cout << goc -> info << "\t";
+		else
+		{
+			InMuci(goc -> trai, i , muc + 1);
+			InMuci(goc -> phai, i , muc + 1);
+		}
+}
+
 int KiemTraCayAVL(Node *goc)
 {
 	if(goc == NULL)
@@ -169,86 +181,16 @@ void XuatKiemTra(Node *&c)
 		cout << "Khong phai la cay nhi phan tim kiem can bang " << endl;
 }
 
-void XoayTrai(Node *&p)
+void SaoChep(Node *goc, Node *&goc1)
 {
-	Node *q;
-	q = p -> phai;
-	p -> phai = q -> trai;
-	q -> trai = p;
-	p = q;
-}
-
-void XoayPhai(Node *&p)
-{
-	Node *q;
-	q = p -> trai;
-	p -> trai = q -> phai;
-	q -> phai = p;
-	p = q;
-}
-
-
-void CanBangTrai(Node *&p)
-{
-	switch(p -> trai -> cb)
+	if(goc == NULL)
+		goc1 = NULL;
+	else
 	{
-		case 1: //Mat can bang trai
-			XoayPhai(goc);
-			p -> cb = 0;
-			p -> phai -> cb = 0;
-			break;
-		case 2: //Cho biet truong hop mat can bang nao
-			XoayTrai(p -> trai);
-			XoayPhai(goc);
-			switch(p -> cb)
-			{
-				case 0: 
-					p -> trai -> cb = 0;
-					p -> phai -> cb = 0;
-					break;
-				case 1:
-					p -> trai -> cb = 0;
-					p -> phai -> cb = 2;
-					break;
-				case 2:	
-					p -> trai -> cb = 1;
-					p -> phai -> cb = 2;
-					break;
-			}
-			p -> cb = 0;
-			break;
-	}
-}
-
-void CanBangPhai(Node *&p)
-{
-	switch(p -> phai -> cb)
-	{
-		case 1: //Cho biet la truong hop mat can bang nao
-			XoayPhai(p -> phai);
-			XoayTrai(goc);
-			switch(p -> cb)
-			{
-				case 0: 
-					p -> trai -> cb = 0;
-					p -> phai -> cb = 0;
-					break;
-				case 1:
-					p -> trai -> cb = 1;
-					p -> phai -> cb = 0;
-					break;
-				case 2:
-					p -> trai -> cb = 0;
-					p -> phai -> cb = 2;
-					break;
-			}
-			p -> cb = 0;
-			break;
-		case 2: // Cho biet day la truong hop mat can bang nao
-			XoayTrai(goc);
-			p -> cb = 0;
-			p -> trai -> cb = 0;
-			break;
+		goc1 = new Node;
+		goc1 -> info = goc -> info;
+		SaoChep(goc -> trai, goc1 -> trai);
+		SaoChep(goc -> phai, goc1 -> phai);
 	}
 }
 
@@ -289,7 +231,7 @@ int XoaNut(Node *&goc, int x)
 
 int main()
 {
-	int x;
+	int x, i;
 	KhoiTao(goc);
 	TaoCay(goc);
 	
@@ -301,19 +243,18 @@ int main()
 	cout << endl;
 	cout << "------------------------------------------" << endl;
 	
-	cout << "Duyet cay theo thu tu sau (RLN) " << endl;
-	DuyetRLN(goc);
+	cout << "Nhap muc muon in ra man hinh : ";
+	cin >> i;
+	InMuci(goc, i, 1);
 	
 	cout << endl;
 	cout << "------------------------------------------" << endl;
 	
-	cout << "Duyet cay theo thu tu truoc (NRL) " << endl;
-	DuyetNRL(goc);
-	
+	cout << "Chieu cao cua cay : " << ChieuCaoAVL(goc) << endl;
+
+	cout << "---------------------------------------------" << endl;
 	cout << endl;
-	cout << "------------------------------------------" << endl;
 	
-	cout << endl;
 	XuatKiemTra(goc);
 	
 	cout << endl;
@@ -323,6 +264,15 @@ int main()
 		cout << "La cay AVL" << endl;
 	else
 		cout << "Khong phai cay AVL" << endl;
+		
+	cout << endl;
+	cout << "------------------------------------------" << endl;
+		
+	KhoiTao(goc1);
+	SaoChep(goc, goc1);
+	
+	cout << "Cay sau khi sao chep " << endl;
+	DuyetLNR(goc1);
 		
 	cout << endl;
 	cout << "------------------------------------------" << endl;
