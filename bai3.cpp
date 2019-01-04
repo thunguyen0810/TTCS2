@@ -59,26 +59,6 @@ void DuyetLNR(Node *goc)
 	}
 }
 
-void DuyetRLN(Node *goc)
-{
-	if(goc != NULL)
-	{
-		DuyetRLN(goc -> phai);
-		DuyetRLN(goc -> trai);
-		cout << goc -> info << " ";
-	}
-}
-
-void DuyetNRL(Node *goc)
-{
-	if(goc != NULL)
-	{
-		cout << goc -> info << " ";
-		DuyetNRL(goc -> phai);
-		DuyetNRL(goc -> trai);
-	}
-}
-
 void InMuci(Node *goc, int i, int muc = 1)
 {
 	if(goc != NULL)
